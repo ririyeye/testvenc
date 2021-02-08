@@ -16,8 +16,6 @@ extern "C" {
 #include <sys/ioctl.h>
 
 #include "sample_comm.h"
-#include "RtspCaster.h"
-#include "HtRtsp.h"
 
 HI_VOID SAMPLE_VIO_MsgInit(HI_VOID)
 {
@@ -234,7 +232,7 @@ HI_S32 HT_VIO_LT8619C(HI_U32 u32VoIntfType)
         SAMPLE_PRT("vo bind vpss failed. s32Ret: 0x%x !\n", s32Ret);
         goto EXIT5;
     }
-
+#if 0
     ///////RTSP
     {
         caster_init(554, NULL);
@@ -253,7 +251,7 @@ HI_S32 HT_VIO_LT8619C(HI_U32 u32VoIntfType)
         caster_chl_open(&g_handle[0], "chn0", &fmt);
         printf("rtsp name:chn0 \n");
     }
-    
+#endif  
     s32Ret = SAMPLE_COMM_VENC_StartGetStream(VencChn, sizeof(VencChn)/sizeof(VENC_CHN));
     if (HI_SUCCESS != s32Ret)
     {

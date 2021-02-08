@@ -7,6 +7,7 @@ SET(CMAKE_C_COMPILER ${toolpathprefix}gcc)
 SET(CMAKE_CXX_COMPILER ${toolpathprefix}g++)
 SET(CMAKE_STRIP  ${toolpathprefix}strip)
 SET(CMAKE_AR ${toolpathprefix}ar)
+SET(CMAKE_LD ${toolpathprefix}ld)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 add_definitions(-mcpu=cortex-a7 -mapcs -rdynamic)

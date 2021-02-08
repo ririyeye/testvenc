@@ -3,12 +3,21 @@ cmake_minimum_required(VERSION 3.5)
 
 PROJECT(PROJECT_ONE)
 
-set(main aim)
-add_executable(${main} main.cpp sample_vio.c)
+set(SENSOR0_TYPE HT_BT656_2M_30FPS_8BIT)
+set(SENSOR1_TYPE HT_BT656_2M_30FPS_8BIT)
+add_definitions(-DSENSOR0_TYPE=HT_BT656_2M_30FPS_8BIT)
+add_definitions(-DSENSOR1_TYPE=HT_BT656_2M_30FPS_8BIT)
 
+
+
+set(main aim)
 include_directories(${PROJECT_SOURCE_DIR}/mpp/include)
 include_directories(${PROJECT_SOURCE_DIR}/common)
 
+#add common
+add_subdirectory(common)
+
+add_executable(${main} main.cpp sample_vio.c)
 
 link_directories(${PROJECT_SOURCE_DIR}/mpp/lib)
 
@@ -54,6 +63,10 @@ target_link_libraries(${main} ${PROJECT_SOURCE_DIR}/mpp/lib/libdnvqe.a)
 
 target_link_libraries(${main} pthread)
 target_link_libraries(${main} dl)
+
+
+
+target_link_libraries(${main} ${PROJECT_SOURCE_DIR}/common/common)
 
 INSTALL(TARGETS ${main}
        RUNTIME DESTINATION ./

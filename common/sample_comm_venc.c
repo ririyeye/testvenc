@@ -36,7 +36,6 @@ extern "C" {
 
 #include "sample_comm.h"
 
-#include "HtRtsp.h"
 
 const HI_U8 g_SOI[2] = {0xFF, 0xD8};
 const HI_U8 g_EOI[2] = {0xFF, 0xD9};
@@ -2064,8 +2063,6 @@ HI_VOID* SAMPLE_COMM_VENC_GetVencStreamProc(HI_VOID* p)
             return (void *)HI_FAILURE;
         }
 
-        g_videoPktCount[i] = 0;
-        g_lastVideoPts[i] = 0;
     }
 
     /******************************************
@@ -2160,10 +2157,10 @@ HI_VOID* SAMPLE_COMM_VENC_GetVencStreamProc(HI_VOID* p)
                             return NULL;
                         }
                     }
-
+#if 0
                     if(g_handle[i] != NULL)
                     {
-                        MPacket pkt = {0};
+                        //MPacket pkt = {0};
                         int len = 0, off = 0;
                         int n = 0;
                         for (n = 0; n < stStream.u32PackCount; n++)
@@ -2210,12 +2207,14 @@ HI_VOID* SAMPLE_COMM_VENC_GetVencStreamProc(HI_VOID* p)
                             free(pkt.data);
                         }
                     }
-
+#endif
+#if 0
 #ifndef __HuaweiLite__
                     if(g_handle[i] == NULL)
                     s32Ret = SAMPLE_COMM_VENC_SaveStream(pFile[i], &stStream);
 #else
                     s32Ret = SAMPLE_COMM_VENC_SaveStream_PhyAddr(pFile[i], &stStreamBufInfo[i], &stStream);
+#endif
 #endif
                     if (HI_SUCCESS != s32Ret)
                     {
