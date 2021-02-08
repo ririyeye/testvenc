@@ -74,8 +74,8 @@ HI_S32 HT_VIO_LT8619C(HI_U32 u32VoIntfType)
     VPSS_CHN_ATTR_S    astVpssChnAttr[VPSS_MAX_PHY_CHN_NUM];
 
     VENC_CHN           VencChn[1]  = {0};
-    PAYLOAD_TYPE_E     enType      = PT_H265;
-    SAMPLE_RC_E        enRcMode    = SAMPLE_RC_CBR;
+    PAYLOAD_TYPE_E     enType      = PT_H264;
+    SAMPLE_RC_E        enRcMode    = SAMPLE_RC_VBR;
     HI_U32             u32Profile  = 0;
     HI_BOOL            bRcnRefShareBuf = HI_FALSE;
     VENC_GOP_ATTR_S    stGopAttr;

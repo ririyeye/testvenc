@@ -35,7 +35,7 @@ extern "C" {
 #include <sys/prctl.h>
 
 #include "sample_comm.h"
-
+#include "share_mem.h"
 
 const HI_U8 g_SOI[2] = {0xFF, 0xD8};
 const HI_U8 g_EOI[2] = {0xFF, 0xD9};
@@ -2000,6 +2000,15 @@ HI_VOID* SAMPLE_COMM_VENC_GetVencStreamProc(HI_VOID* p)
     VENC_STREAM_BUF_INFO_S stStreamBufInfo[VENC_MAX_CHN_NUM];
 
     prctl(PR_SET_NAME, "GetVencStream", 0,0,0);
+
+    printf("123\n");
+    struct DATA_BLOCK_MEM *dbm = get_DATA_BLOCK_MEM();
+    if (dbm)
+    {
+	    printf("get dbm\n");
+    }else{
+        printf("get dbm 0\n");
+    }
 
     pstPara = (SAMPLE_VENC_GETSTREAM_PARA_S*)p;
     s32ChnTotal = pstPara->s32Cnt;

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.cpp": "cpp",
+        "share_mem.h": "c"
+    }
+}
