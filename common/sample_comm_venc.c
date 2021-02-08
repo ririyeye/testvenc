@@ -2157,60 +2157,9 @@ HI_VOID* SAMPLE_COMM_VENC_GetVencStreamProc(HI_VOID* p)
                             return NULL;
                         }
                     }
-#if 0
-                    if(g_handle[i] != NULL)
-                    {
-                        //MPacket pkt = {0};
-                        int len = 0, off = 0;
-                        int n = 0;
-                        for (n = 0; n < stStream.u32PackCount; n++)
-                        {
-                            len += (stStream.pstPack[n].u32Len - stStream.pstPack[n].u32Offset);                  
-                        }
-
-                        pkt.data = (unsigned char *)malloc(len + 256);
-
-                        pkt.flags = 0;
-                        if(stStream.u32PackCount > 1) pkt.flags = 1;
-                        
-                        for (n = 0; n < stStream.u32PackCount; n++)
-                        {
-                            memcpy(pkt.data + off, stStream.pstPack[n].pu8Addr + stStream.pstPack[n].u32Offset,
-                                    stStream.pstPack[n].u32Len - stStream.pstPack[n].u32Offset);
-                            off += (stStream.pstPack[n].u32Len - stStream.pstPack[n].u32Offset);               
-                        }
-
-                        pkt.type = MTYPE_VIDEO;
-                        pkt.size = len;
-                        pkt.pts = stStream.pstPack[n -1].u64PTS;
-                        
-                        if (g_videoPktCount[i] <= 0)
-                        {
-                            g_lastVideoPts[i] = pkt.pts;
-                            g_videoPktCount[i]++;
-                        }
-
-                        long long ptsDiff = pkt.pts - g_lastVideoPts[i];
-                        if ((ptsDiff <= 0) || (ptsDiff > 1000000))
-                        {
-                            ptsDiff = 0;
-                        }
-
-                        pkt.duration = ptsDiff;
-
-                        // printf("%lld %d %d \n", pkt.pts, pkt.duration, pkt.flags);
-                        caster_chl_write_video(g_handle[i], &pkt);
-
-                        g_lastVideoPts[i] = pkt.pts;
-                        if(pkt.data != NULL)
-                        {
-                            free(pkt.data);
-                        }
-                    }
-#endif
-#if 0
+#if 1
 #ifndef __HuaweiLite__
-                    if(g_handle[i] == NULL)
+                    //if(g_handle[i] == NULL)
                     s32Ret = SAMPLE_COMM_VENC_SaveStream(pFile[i], &stStream);
 #else
                     s32Ret = SAMPLE_COMM_VENC_SaveStream_PhyAddr(pFile[i], &stStreamBufInfo[i], &stStream);
