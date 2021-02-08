@@ -4,9 +4,12 @@ cmake_minimum_required(VERSION 3.5)
 PROJECT(PROJECT_ONE)
 
 set(main aim)
-add_executable(${main} main.cpp)
+add_executable(${main} main.cpp sample_vio.c)
 
 include_directories(${PROJECT_SOURCE_DIR}/mpp/include)
+include_directories(${PROJECT_SOURCE_DIR}/common)
+
+
 link_directories(${PROJECT_SOURCE_DIR}/mpp/lib)
 
 target_link_libraries(${main} ${PROJECT_SOURCE_DIR}/mpp/lib/lib_hiae.a)
