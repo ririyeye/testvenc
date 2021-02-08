@@ -25,5 +25,7 @@ int main(int argc, char **argv)
 	} else {
 		u32VoIntfType = 0;
 	}
+
+	printf("123\n");
 	return 0;
 }
