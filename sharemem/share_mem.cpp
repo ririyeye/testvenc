@@ -26,12 +26,9 @@ static inline int PER_PACK_DAT_LEN(void)
 	return sizeof(DATA_BLOCK::dat);
 }
 
-struct DATA_BLOCK_MEM{
-    struct DATA_BLOCK db[MAX_PACK_CNT];
+struct DATA_BLOCK_MEM {
+	struct DATA_BLOCK db[MAX_PACK_CNT];
 };
-
-
-
 
 key_t getKey(const char *path, int num)
 {
@@ -73,10 +70,22 @@ int find_last_dat_index(struct DATA_BLOCK_MEM *blcok)
 		if (pdb[i].first_buffer_pos != i) {
 			continue;
 		}
-		#warning "包头数据没有验证"
-		if (pdb[i].packcnt > 0) {
-			maxindex = i;
+
+		int getpackcnt = pdb[i].packcnt;
+
+		if (getpackcnt == 0)
+			continue;
+
+		size_t cnt = pdb[i].packcnt;
+
+		for (size_t index = 0; i < cnt; index++) {
+			size_t testindex = (i + index) % MAX_PACK_CNT;
+			//连续的数据包有相同的包头
+			if (cnt != pdb[testindex].packcnt || i != pdb[testindex].first_buffer_pos) {
+				continue;
+			}
 		}
+		maxindex = i;
 	}
 	return maxindex;
 }
@@ -111,33 +120,24 @@ int get_buff_handle(struct DATA_BLOCK_HANDLE *hdl, enum DAT_BLOCK_FLG flg)
 
 int put_stream_buff(struct DATA_BLOCK_HANDLE *hdl, VENC_STREAM_S *pstStream)
 {
-	if(!hdl || ! pstStream){
+	if (!hdl || !pstStream) {
 		return -1;
 	}
 
 	DATA_BLOCK_MEM *blcok = (DATA_BLOCK_MEM *)hdl->pdat;
 
-	struct DATA_BLOCK * pdb = blcok->db;
-	
+	struct DATA_BLOCK *pdb = blcok->db;
 
-	int all_dat_len = 0;
-	for (size_t i = 0; i < pstStream->u32PackCount; i++) {
-		all_dat_len += pstStream->pstPack[i].u32Len - pstStream->pstPack[i].u32Offset;
-	}
+	//没有要写入的数据
+	if (!pstStream->u32PackCount)
+		return -2;
 
-	int all_buffer_cnt = all_dat_len / PER_PACK_DAT_LEN() + (all_dat_len % PER_PACK_DAT_LEN()) ? 1 : 0;
-
-	//写入头节点
-	pdb[hdl->pointcnt].first_buffer_pos = hdl->pointcnt;
-	pdb[hdl->pointcnt].all_buffer_cnt = all_buffer_cnt;
-	//写入包数量
-	pdb[hdl->pointcnt].packcnt = pstStream->u32PackCount;
 	//写入包数据
 	size_t wr_pos = 0;
 	size_t wr_pack_index = hdl->pointcnt;
 	for (size_t i = 0; i < pstStream->u32PackCount; i++) {
 		//计算stream包
-		const size_t pack_tatal_len = pstStream->pstPack[i].u32Len - pstStream->pstPack[i].u32Offset;		
+		const size_t pack_tatal_len = pstStream->pstPack[i].u32Len - pstStream->pstPack[i].u32Offset;
 		unsigned char *pack_dat_start = pstStream->pstPack[i].pu8Addr + pstStream->pstPack[i].u32Offset;
 
 		size_t pack_left_len = pack_tatal_len;
@@ -162,6 +162,22 @@ int put_stream_buff(struct DATA_BLOCK_HANDLE *hdl, VENC_STREAM_S *pstStream)
 			}
 		}
 	}
-	//hdl->pointcnt = wr_pos
+	//写入包头信息
+	int all_dat_len = 0;
+	for (size_t i = 0; i < pstStream->u32PackCount; i++) {
+		all_dat_len += pstStream->pstPack[i].u32Len - pstStream->pstPack[i].u32Offset;
+	}
+
+	size_t all_buffer_cnt = all_dat_len / PER_PACK_DAT_LEN() + (all_dat_len % PER_PACK_DAT_LEN()) ? 1 : 0;
+
+	for (size_t i = 0; i < all_buffer_cnt; i++) {
+		size_t head_wr_index = (hdl->pointcnt + i) % MAX_PACK_CNT;
+		pdb[head_wr_index].first_buffer_pos = hdl->pointcnt;
+		pdb[head_wr_index].all_buffer_cnt = all_buffer_cnt;
+		pdb[head_wr_index].packcnt = pstStream->u32PackCount;
+	}
+	//修改下次写入包
+	hdl->pointcnt += all_buffer_cnt;
+	hdl->pointcnt = hdl->pointcnt % MAX_PACK_CNT;
 	return 0;
 }
