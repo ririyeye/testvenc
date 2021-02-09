@@ -6,27 +6,22 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include "hi_comm_venc.h"
 
-struct DATA_BLOCK {
-	union {
-		unsigned char header[64];
-
-		struct {
-			unsigned char pos;
-			uint16_t packcnt;
-			uint16_t len[30];
-		};
-	};
-
-	char dat[1024 * 16 - 16];
+struct DATA_BLOCK_HANDLE {
+	void *pdat;
+	int maxcnt;
+	int pointcnt;
 };
 
-struct DATA_BLOCK_MEM{
-    struct DATA_BLOCK db[256];
+enum DAT_BLOCK_FLG{
+	DAT_BLOCK_CLEAN = 1,
 };
 
-struct DATA_BLOCK_MEM *get_DATA_BLOCK_MEM(void);
 
+int get_buff_handle(struct DATA_BLOCK_HANDLE *hdl, enum DAT_BLOCK_FLG flg);
+
+int put_stream_buff(struct DATA_BLOCK_HANDLE *hdl, VENC_STREAM_S *pstStream);
 
 #if __cplusplus
 }
